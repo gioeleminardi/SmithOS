@@ -1,5 +1,5 @@
 CC=i586-elf-g++
-AS=i586-elf-as
+AS=nasm -felf
 LD=i586-elf-gcc
 CFLAGS=-ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti
 LDFLAGS=-ffreestanding -O2 -nostdlib -lgcc
@@ -9,7 +9,7 @@ all: SmithOS.iso
 qemu: SmithOS.iso
 	qemu-system-i386 -cdrom ../SmithOS.iso
 boot.o: boot.s
-	$(AS) boot.s -o boot.o
+	$(AS) boot.s
 kernel.o: kernel.cpp
 	$(CC) -c kernel.cpp -o kernel.o $(CFLAGS)
 SmithOS.bin: boot.o kernel.o

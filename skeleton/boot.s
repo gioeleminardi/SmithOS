@@ -1,29 +1,34 @@
-.set ALIGN,	1<<0
-.set MEMINFO,	1<<1
-.set FLAGS,	ALIGN | MEMINFO
-.set MAGIC,	0x1BADB002
-.set CHECKSUM,	-(MAGIC + FLAGS)
+;
+; boot.s 
+;
+MBOOT_PAGE_ALIGN    equ 1<<0 
+MBOOT_MEM_INFO      equ 1<<1    
+MBOOT_HEADER_MAGIC  equ 0x1BADB002 
+MBOOT_HEADER_FLAGS  equ MBOOT_PAGE_ALIGN | MBOOT_MEM_INFO
+MBOOT_CHECKSUM      equ -(MBOOT_HEADER_MAGIC + MBOOT_HEADER_FLAGS)
 
-.section .multiboot
-.align 4
-.long MAGIC
-.long FLAGS
-.long CHECKSUM
+[BITS 32]                       
 
-.section .bootstrap_stack
-stack_bottom:
-	.skip 16384 # 16kB
-stack_top:
+[GLOBAL mboot]                  
+[EXTERN code]                   
+[EXTERN bss]                   
+[EXTERN end]                    
 
-.section .text
-.global _start
-.type _start, @function
-_start:
-	movl $stack_top, %esp
-	call kernel_main
-	cli
-	hlt
-.hang:
-	jmp .hang
+mboot:
+  dd  MBOOT_HEADER_MAGIC                               
+  dd  MBOOT_HEADER_FLAGS        
+  dd  MBOOT_CHECKSUM            
+  dd  mboot                     
+  dd  code                      
+  dd  bss                      
+  dd  end                       
+  dd  start                    
 
-.size _start, . - _start
+[GLOBAL start]                  
+[EXTERN kernel_main]            
+
+start:
+  push    ebx                   
+  cli                        
+  call kernel_main                  
+  jmp $             

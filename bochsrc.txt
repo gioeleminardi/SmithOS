@@ -1,0 +1,9 @@
+romimage: file=/usr/share/bochs/BIOS-bochs-latest
+megs: 32
+vgaromimage: file=/usr/share/bochs/VGABIOS-lgpl-latest
+ata0-master: type=cdrom, path=SmithOS.iso, status=inserted
+log: out.bochs
+mouse: enabled=0
+cpu: ips=15000000
+boot: cdrom
+display_library: sdl

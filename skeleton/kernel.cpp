@@ -98,9 +98,10 @@ void terminal_writestring(const char* data){
 extern "C"
 #endif
 
-void kernel_main(){
+int kernel_main(){
 	terminal_initialize();
 	terminal_writestring("SmithOS v0.0.1\nby AgenteSmith");
+	return 0xDEADBABA;
 }
 
 
