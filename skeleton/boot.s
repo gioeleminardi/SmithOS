@@ -28,7 +28,7 @@ mboot:
 [EXTERN kernel_main]            
 
 start:
-  push    ebx                   
+  push ebx                   
   cli                        
   call kernel_main                  
   jmp $             
