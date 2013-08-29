@@ -23,9 +23,9 @@ static void terminal_putentryat(char c, uint8_t color, size_t x, size_t y){
   video_memory[index] = make_vgaentry(c, color);
 }
 
-static void terminal_setcolor(uint8_t color){
+/*static void terminal_setcolor(uint8_t color){
   terminal_color = color;
-}
+}*/
 
 void monitor_initialize(){
   cursor_x = 0; //column
@@ -89,11 +89,57 @@ void monitor_clear(){
 }
 
 void monitor_write(const char *c){
-  int i = 0;
+  size_t i = 0;
   while(c[i]){
     monitor_put(c[i++]);
   }
 }
 
+void monitor_write_hex(uint32_t n){
+  int32_t tmp;
+  monitor_write("0x");
+  char noZeroes = 1;
+  int i;
+  for(i = 28; i > 0; i -= 4){
+    tmp = (n >> i) & 0xF;
+    if(tmp == 0 && noZeroes !=0){
+      continue;
+    }
+    if(tmp >= 0xA){
+      noZeroes = 0;
+      monitor_put(tmp-0xA+'a');
+    }else{
+      noZeroes = 0;
+      monitor_put(tmp+'0');
+    }
+  }
+  tmp = n & 0xF;
+  if(tmp >= 0xA){
+    monitor_put(tmp-0xA+'a');
+  }else{
+    monitor_put(tmp+'0');
+  }
+}
 
-
+void monitor_write_dec(uint32_t n){
+  if(n==0){
+    monitor_put('0');
+    return;
+  }
+  int32_t acc = n;
+  char c[32];
+  int i = 0;
+  while(acc > 0){
+    c[i] = '0' + acc%10;
+    acc /= 10;
+    i++;
+  }
+  c[i]=0;
+  char c2[32];
+  c2[i--] = 0;
+  int j = 0;
+  while(i >= 0){
+    c2[i--] = c[j++];
+  }
+  monitor_write(c2);
+}
